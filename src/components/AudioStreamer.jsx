@@ -1,6 +1,7 @@
-import { forwardRef, useState } from 'react';
+import { useRef, useState } from 'react';
 
-const AudioStreamer = forwardRef(({ loading, prompt }, ref) => {
+const AudioStreamer = ({ loading, prompt }) => {
+  const ref = useRef(null);
   const [showControls, setShowControls] = useState(false);
 
   const getAudio = async text => {
@@ -71,8 +72,6 @@ const AudioStreamer = forwardRef(({ loading, prompt }, ref) => {
       </button>
     </div>
   );
-});
-
-AudioStreamer.displayName = 'AudioStreamer';
+};
 
 export default AudioStreamer;
