@@ -1,8 +1,14 @@
 import { useState } from 'react';
 import { toast } from 'react-toastify';
 
-const RequestForm = ({ messages, setMessages, totalRequests, setTotalRequests }) => {
-  const [loading, setLoading] = useState(false);
+const RequestForm = ({
+  loading,
+  setLoading,
+  messages,
+  setMessages,
+  totalRequests,
+  setTotalRequests
+}) => {
   const [{ message, stream }, setFormState] = useState({
     message: '',
     stream: true

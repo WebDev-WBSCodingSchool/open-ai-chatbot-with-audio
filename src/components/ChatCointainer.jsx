@@ -6,6 +6,8 @@ import bash from 'refractor/lang/bash';
 import js from 'refractor/lang/javascript.js';
 import php from 'refractor/lang/php.js';
 import python from 'refractor/lang/python.js';
+import { useRef } from 'react';
+import { AudioStreamer } from '.';
 
 // Then register them
 registerLanguage(bash);
@@ -22,8 +24,9 @@ const renderer = {
   }
 };
 
-const ChatContainer = ({ messages }) => {
+const ChatContainer = ({ loading, messages }) => {
   const { profilePic } = useOutletContext();
+  const audioRef = useRef();
 
   return messages
     .filter(m => m.role !== 'system') // Filter out system messages
@@ -53,6 +56,9 @@ const ChatContainer = ({ messages }) => {
           <Markdown gfm renderer={renderer}>
             {m.content}
           </Markdown>
+          {m.role === 'assistant' && (
+            <AudioStreamer ref={audioRef} loading={loading} prompt={m.content} />
+          )}
         </div>
       </div>
     ));
