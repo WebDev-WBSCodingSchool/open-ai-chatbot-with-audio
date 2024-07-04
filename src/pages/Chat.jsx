@@ -1,8 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { ChatCointainer, RequestForm } from '@/components';
 
-const systemPrompt =
-  'You are Gollum, from Lord of the Rings, you became a senior software engineer and are as helpful as you are annoying';
+const systemPrompt = 'You are a poet and reply in spanish';
 
 const Chat = () => {
   const chatRef = useRef(null);

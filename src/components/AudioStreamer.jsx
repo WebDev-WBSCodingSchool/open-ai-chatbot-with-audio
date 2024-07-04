@@ -25,55 +25,36 @@ const AudioStreamer = forwardRef(({ loading, prompt }, ref) => {
       ref.current.src = URL.createObjectURL(mediaSource);
       setShowControls(true);
       // Add an event listener to the MediaSource to handle the sourceopen event
-      mediaSource.addEventListener('sourceopen', () => {
+      mediaSource.addEventListener('sourceopen', async () => {
         // Create a new SourceBuffer and set the MIME type to audio/mpeg
         const sourceBuffer = mediaSource.addSourceBuffer('audio/mpeg');
-        // Create a new ReadableStream from the response body
+        // Get the reader from the response body
         const reader = res.body.getReader();
-        // Create a queue to store the chunks of data
+        // Create a queue to store the chunks of data. This is because appendBuffer can only be called when the source buffer is not updating
         const queue = [];
-        // Create a flag to check if the source buffer is updating
-        let sourceBufferUpdating = false;
-
         // Create a function to process the queue
         const processQueue = () => {
           // If the source buffer is not updating and the queue is not empty
-          if (!sourceBufferUpdating && queue.length > 0) {
-            // Set the source buffer updating flag to true
-            sourceBufferUpdating = true;
+          if (!sourceBuffer.updating && queue.length > 0) {
             // Shift the first chunk from the queue
             const chunk = queue.shift();
             // Append the chunk to the source buffer
             sourceBuffer.appendBuffer(chunk);
           }
         };
-        // Add an event listener to the source buffer to handle the updateend event
-        sourceBuffer.addEventListener('updateend', () => {
-          // Set the source buffer updating flag to false
-          sourceBufferUpdating = false;
+        // After the updateend event is fired, check the queue
+        sourceBuffer.addEventListener('updateend', () => processQueue());
+
+        let result;
+        // While the reader is not done
+        while (!(result = await reader.read()).done) {
+          // If the result is done, end the stream
+          if (result.done) return mediaSource.endOfStream();
+          // Push the next chunk to the queue
+          queue.push(result.value);
           // Process the queue
           processQueue();
-        });
-        // Create a function to read the stream
-        const readStream = async () => {
-          // Create a function to process the chunks
-          const processChunk = async () => {
-            // Read a chunk from the stream
-            const { done, value } = await reader.read();
-            // If the stream is done, end the media source
-            if (done) return mediaSource.endOfStream();
-            // Push the next chunk to the queue
-            queue.push(value);
-            // Process the queue
-            processQueue();
-            // Recursively process the next chunk
-            await processChunk();
-          };
-          // Process the first chunk
-          await processChunk();
-        };
-        // Start reading the stream
-        readStream().catch(error => console.error('Stream error:', error));
+        }
       });
       // Play the audio
       ref.current.play();
