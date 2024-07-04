@@ -47,7 +47,6 @@ const AudioStreamer = forwardRef(({ loading, prompt }, ref) => {
             sourceBuffer.appendBuffer(chunk);
           }
         };
-
         // Add an event listener to the source buffer to handle the updateend event
         sourceBuffer.addEventListener('updateend', () => {
           // Set the source buffer updating flag to false
@@ -55,7 +54,6 @@ const AudioStreamer = forwardRef(({ loading, prompt }, ref) => {
           // Process the queue
           processQueue();
         });
-
         // Create a function to read the stream
         const readStream = async () => {
           // Create a function to process the chunks

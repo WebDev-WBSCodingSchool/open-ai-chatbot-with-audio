@@ -34,7 +34,7 @@ const ChatContainer = ({ loading, messages }) => {
       <div key={m.id} className={`chat ${m.role === 'assistant' ? 'chat-start' : 'chat-end'}`}>
         {m.role === 'user' && profilePic && (
           <div className='chat-image avatar'>
-            <div className='w-20 rounded-full'>
+            <div className='w-12 rounded-full'>
               <img
                 src={
                   profilePic.b64_json.includes('data:image/png;base64,')
@@ -43,7 +43,6 @@ const ChatContainer = ({ loading, messages }) => {
                 }
                 alt='User'
                 className='rounded-full shadow-lg'
-                width={50}
               />
             </div>
           </div>

@@ -26,7 +26,8 @@ const RequestForm = ({
   const handleSubmit = async e => {
     try {
       e.preventDefault();
-      if (totalRequests === 5) {
+      const requestLimit = import.meta.env.VITE_MAX_REQUESTS || 5;
+      if (totalRequests >= requestLimit) {
         setFormState(prev => ({ ...prev, message: '' }));
         throw new Error('You have reached the maximum number of requests.');
       }

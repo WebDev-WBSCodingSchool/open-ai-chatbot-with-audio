@@ -7,7 +7,7 @@ const systemPrompt =
 const Chat = () => {
   const chatRef = useRef(null);
   const [loading, setLoading] = useState(false);
-  const [totalRequests, setTotalRequests] = useState(import.meta.env.VITE_MAX_REQUESTS || 5);
+  const [totalRequests, setTotalRequests] = useState(0);
   const [messages, setMessages] = useState([
     {
       id: 1,
