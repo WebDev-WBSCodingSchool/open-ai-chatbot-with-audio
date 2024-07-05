@@ -1,12 +1,12 @@
 import Markdown from 'marked-react';
 import { useOutletContext } from 'react-router-dom';
 import { Refractor, registerLanguage } from 'react-refractor';
+import AudioStreamer from '@weyvern/audiostreamer';
 // Load any languages you want to use from `refractor`
 import bash from 'refractor/lang/bash';
 import js from 'refractor/lang/javascript.js';
 import php from 'refractor/lang/php.js';
 import python from 'refractor/lang/python.js';
-import { AudioStreamer } from '.';
 
 // Then register them
 registerLanguage(bash);
@@ -53,7 +53,30 @@ const ChatContainer = ({ loading, messages }) => {
           <Markdown gfm renderer={renderer}>
             {m.content}
           </Markdown>
-          {m.role === 'assistant' && <AudioStreamer loading={loading} prompt={m.content} />}
+          {m.role === 'assistant' && (
+            <AudioStreamer
+              label='Read it to me'
+              show={loading}
+              fetcher={() =>
+                fetch(`${import.meta.env.VITE_OPENAI_PROXY}/api/v1/audio/speech`, {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json ',
+                    provider: 'open-ai',
+                    mode: import.meta.env.VITE_OPENAI_PROXY_MODE
+                  },
+                  body: JSON.stringify({
+                    model: 'tts-1',
+                    voice: 'echo',
+                    input: m.content
+                  })
+                })
+              }
+              containerClassName='flex  items-center justify-end gap-5'
+              audioClassName='w-full bg-transparent'
+              buttonClassName='btn'
+            />
+          )}
         </div>
       </div>
     ));
